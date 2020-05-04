@@ -186,6 +186,7 @@ name = "hn_terminal"
 version = "0.1.0"
 dependencies = [
  "reqwest 0.10.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.51 (registry+https://github.com/rust-lang/crates.io-index)",
  "termion 1.5.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "tui 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

@@ -10,3 +10,4 @@ edition = "2018"
 tui = "0.9.1"
 termion = "1.5"
 reqwest = { version = "0.10", features = ["blocking", "json"] }
+serde_json = "1.0"
