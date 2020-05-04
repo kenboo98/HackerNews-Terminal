@@ -1,11 +1,26 @@
 use std::io;
 use termion::raw::IntoRawMode;
-use tui::Terminal;
-use tui::backend::TermionBackend;
-use tui::widgets::{Block, Borders, List, Text};
-use tui::layout::{Layout, Constraint, Direction};
 use termion::screen::AlternateScreen;
-use tui::style::{Style, Color, Modifier};
+use tui::{
+    Terminal,
+    backend::TermionBackend,
+    widgets::{
+        Block,
+        Borders,
+        List,
+        Text
+    },
+    layout::{
+        Layout,
+        Constraint,
+        Direction
+    },
+    style::{
+        Style,
+        Color,
+        Modifier
+    }
+};
 
 mod event;
 use crate::event::{Event, Events};
