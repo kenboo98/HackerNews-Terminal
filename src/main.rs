@@ -22,13 +22,16 @@ use tui::{
     }
 };
 
+use serde_json::Value;
+
 mod event;
 mod hn_api;
 use crate::event::{Event, Events};
-use crate::hn_api::best_stories;
+use crate::hn_api::{best_stories, items};
 
 use termion::event::Key;
 use std::error::Error;
+use std::borrow::Borrow;
 
 fn main() -> Result<(), Box<dyn Error>> {
 
@@ -40,6 +43,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     terminal.hide_cursor()?;
     let events = Events::new();
     let best_stories = best_stories().unwrap();
+    let top_items = items(&best_stories[..10])?;
+    let top_titles: Vec<String> = top_items.into_iter().map(|item|{item["title"].to_string()}).collect();
     loop {
         terminal.draw(|mut f| {
             let chunks = Layout::default()
@@ -53,9 +58,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                     ].as_ref()
                 )
                 .split(f.size());
-            let items = best_stories.iter().map(|i| Text::raw(i));
+            let items = top_titles.iter().map(|i| Text::raw(i));
             let my_list = List::new(items)
-                .block(Block::default().title("List").borders(Borders::ALL))
+                .block(Block::default().title("HACKER NEWS").borders(Borders::ALL))
                 .style(Style::default().fg(Color::White))
                 .highlight_style(Style::default().modifier(Modifier::ITALIC))
                 .highlight_symbol(">>");
