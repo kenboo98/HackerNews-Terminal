@@ -1,14 +1,39 @@
+use std::collections::HashMap;
 use reqwest::blocking;
 use std::io::{Error, ErrorKind};
 use serde_json::{Value, Number, Map};
 use std::borrow::BorrowMut;
 
 const URI_PREFIX: &str = "https://hacker-news.firebaseio.com/v0/";
+
+const URI_TOP_STORIES: &str = "topstories";
+const URI_NEW_STORIES: &str = "newstories";
 const URI_BEST_STORIES: &str = "beststories";
+const URI_ASK_STORIES: &str = "askstories";
+const URI_SHOW_STORIES: &str = "showstories";
+const URI_JOB_STORIES: &str = "jobstories";
+
 const URI_ITEM: &str = "item/";
 
-pub fn best_stories() -> Result<Vec<String>, Error> {
-    let resp = match blocking::get(format!("{}{}.json", URI_PREFIX, URI_BEST_STORIES).as_str()) {
+pub enum StoryType{
+    TopStories,
+    NewStories,
+    BestStories,
+    AskStories,
+    ShowStories,
+    JobStories
+
+}
+pub fn get_stories(story_type: StoryType) -> Result<Vec<String>, Error> {
+    let endpoint = match story_type {
+        StoryType::TopStories => URI_TOP_STORIES,
+        StoryType::NewStories => URI_NEW_STORIES,
+        StoryType::BestStories => URI_BEST_STORIES,
+        StoryType::AskStories => URI_ASK_STORIES,
+        StoryType::ShowStories => URI_SHOW_STORIES,
+        StoryType::JobStories => URI_JOB_STORIES
+    };
+    let resp = match blocking::get(format!("{}{}.json", URI_PREFIX, endpoint).as_str()) {
         Ok(resp) => resp,
         Err(e) => return Err(Error::new(ErrorKind::NotConnected, "Could not access HackerNews"))
     };
