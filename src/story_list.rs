@@ -13,11 +13,10 @@ pub struct StoryList {
 }
 
 impl StoryList {
-
-    pub fn new(story_type: StoryType) -> StoryList {
+    pub fn new(story_type: &StoryType) -> StoryList {
         let ids = get_stories(story_type).expect("Could not get IDs");
         let items = get_items(&ids[..INITIAL_LOADED_ITEMS]).expect("Could not get items");
-        let titles = items.iter().map(|item|{item["title"].to_string()}).collect();
+        let titles = items.iter().map(|item| { item["title"].to_string() }).collect();
         StoryList {
             state: ListState::default(),
             items,
@@ -31,9 +30,9 @@ impl StoryList {
             Some(i) => {
                 if i >= self.items.len() - 1 {
                     if i < self.ids.len() - 1 {
-                        self.items.append(get_items(&self.ids[i+1..i+2])
+                        self.items.append(get_items(&self.ids[i + 1..i + 2])
                             .expect("Could not get new item").as_mut());
-                        self.titles.push(self.items[self.items.len()-1]["title"].to_string());
+                        self.titles.push(self.items[self.items.len() - 1]["title"].to_string());
                         i + 1
                     } else {
                         0

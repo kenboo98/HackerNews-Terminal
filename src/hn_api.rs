@@ -24,7 +24,7 @@ pub enum StoryType{
     JobStories
 
 }
-pub fn get_stories(story_type: StoryType) -> Result<Vec<String>, Error> {
+pub fn get_stories(story_type: &StoryType) -> Result<Vec<String>, Error> {
     let endpoint = match story_type {
         StoryType::TopStories => URI_TOP_STORIES,
         StoryType::NewStories => URI_NEW_STORIES,
