@@ -44,7 +44,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut terminal = Terminal::new(backend)?;
     terminal.hide_cursor()?;
     let events = Events::new();
-    let mut story = StoryList::new(StoryType::TopStories);
+    let mut story = StoryList::new(StoryType::AskStories);
     loop {
         terminal.draw(|mut f| {
             let chunks = Layout::default()

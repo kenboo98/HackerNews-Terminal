@@ -1,26 +1,28 @@
 use tui::widgets::ListState;
 use serde_json::{Value, Number, Map};
 
-use crate::hn_api::{get_stories, items, StoryType};
+use crate::hn_api::{get_stories, get_items, StoryType};
+
+const INITIAL_LOADED_ITEMS: usize = 20;
 
 pub struct StoryList {
     pub state: ListState,
     pub items: Vec<Map<String, Value>>,
     pub ids: Vec<String>,
-    pub titles: Vec<String>1
+    pub titles: Vec<String>,
 }
 
 impl StoryList {
 
-    pub fn new(story_type: StoryType, max_size: i32) -> StoryList {
+    pub fn new(story_type: StoryType) -> StoryList {
         let ids = get_stories(story_type).expect("Could not get IDs");
-        let items = items(&ids[..50]).expect("Could not get items");
+        let items = get_items(&ids[..INITIAL_LOADED_ITEMS]).expect("Could not get items");
         let titles = items.iter().map(|item|{item["title"].to_string()}).collect();
         StoryList {
             state: ListState::default(),
             items,
             ids,
-            titles
+            titles,
         }
     }
 
@@ -28,7 +30,14 @@ impl StoryList {
         let i = match self.state.selected() {
             Some(i) => {
                 if i >= self.items.len() - 1 {
-                    0
+                    if i < self.ids.len() - 1 {
+                        self.items.append(get_items(&self.ids[i+1..i+2])
+                            .expect("Could not get new item").as_mut());
+                        self.titles.push(self.items[self.items.len()-1]["title"].to_string());
+                        i + 1
+                    } else {
+                        0
+                    }
                 } else {
                     i + 1
                 }

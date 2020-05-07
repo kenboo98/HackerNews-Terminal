@@ -43,7 +43,7 @@ pub fn get_stories(story_type: StoryType) -> Result<Vec<String>, Error> {
 
 }
 
-pub fn items(ids: &[String]) -> Result<Vec<Map<String, Value>>, Error> {
+pub fn get_items(ids: &[String]) -> Result<Vec<Map<String, Value>>, Error> {
     let client = blocking::Client::new();
     let mut result: Vec<Map<String, Value>> = vec!();
     for id in ids {
