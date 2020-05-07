@@ -3,7 +3,7 @@ use serde_json::{Value, Number, Map};
 
 use crate::hn_api::{get_stories, get_items, StoryType};
 
-const INITIAL_LOADED_ITEMS: usize = 20;
+const INITIAL_LOADED_ITEMS: usize = 50;
 
 pub struct StoryList {
     pub state: ListState,

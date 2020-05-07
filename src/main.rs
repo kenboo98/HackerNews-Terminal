@@ -8,7 +8,8 @@ use tui::{
         Block,
         Borders,
         List,
-        Text
+        Text,
+        Tabs
     },
     layout::{
         Layout,
@@ -27,6 +28,9 @@ use serde_json::Value;
 mod event;
 mod story_list;
 mod hn_api;
+mod tabs;
+
+use crate::tabs::TabsState;
 use crate::story_list::StoryList;
 use crate::event::{Event, Events};
 use crate::hn_api::StoryType;
@@ -44,6 +48,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut terminal = Terminal::new(backend)?;
     terminal.hide_cursor()?;
     let events = Events::new();
+    let mut tabs: TabsState<'static> = TabsState::new();
     let mut story = StoryList::new(StoryType::AskStories);
     loop {
         terminal.draw(|mut f| {
@@ -52,8 +57,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .margin(1)
                 .constraints(
                     [
-                        Constraint::Percentage(10),
-                        Constraint::Percentage(80),
+                        Constraint::Percentage(7),
+                        Constraint::Percentage(83),
                         Constraint::Percentage(10)
                     ].as_ref()
                 )
@@ -67,12 +72,22 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .highlight_style(Style::default().modifier(Modifier::ITALIC))
                 .highlight_symbol(">>");
             f.render_stateful_widget(my_list, chunks[1], &mut story.state);
+
+            let tabs = Tabs::default()
+                .block(Block::default().borders(Borders::ALL).title("Stories"))
+                .titles(tabs.titles.as_slice())
+                .select(tabs.index)
+                .style(Style::default().fg(Color::Cyan))
+                .highlight_style(Style::default().fg(Color::Yellow));
+            f.render_widget(tabs, chunks[0]);
         })?;
         match events.next()? {
             Event::Input(key) => match key {
                 Key::Char('q') => {
                     break;
                 },
+                Key::Right => tabs.next(),
+                Key::Left => tabs.previous(),
                 Key::Down => {
                     story.next();
                 },
