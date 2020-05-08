@@ -1,18 +1,18 @@
-pub struct TabsState<'a> {
-    pub titles: Vec<&'a str>,
+pub struct TabsState {
+    pub titles: Vec<String>,
     pub index: usize,
 }
 
-impl<'a> TabsState<'a> {
-    pub fn new() -> TabsState<'a> {
+impl TabsState {
+    pub fn new() -> TabsState {
         TabsState {
             titles: vec![
-                "Top Stories",
-                "New Stories",
-                "Best Stories",
-                "Ask Stories",
-                "Show Stories",
-                "Job Stories"
+                "Top Stories".to_string(),
+                "New Stories".to_string(),
+                "Best Stories".to_string(),
+                "Ask Stories".to_string(),
+                "Show Stories".to_string(),
+                "Job Stories".to_string()
             ],
             index: 0,
         }

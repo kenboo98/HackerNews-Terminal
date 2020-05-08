@@ -1,13 +1,7 @@
 use std::io;
 use termion::raw::IntoRawMode;
 use termion::screen::AlternateScreen;
-use tui::{
-    backend::TermionBackend,
-    layout::{Constraint, Direction, Layout},
-    style::{Color, Modifier, Style},
-    widgets::{Block, Borders, List, Tabs, Text},
-    Terminal,
-};
+use tui::{backend::TermionBackend, layout::{Constraint, Direction, Layout}, style::{Color, Modifier, Style}, widgets::{Block, Borders, List, Tabs, Text}, Terminal, Frame};
 
 use serde_json::Value;
 
@@ -25,6 +19,62 @@ use crate::tabs::TabsState;
 use std::borrow::Borrow;
 use std::error::Error;
 use termion::event::Key;
+use tui::backend::Backend;
+
+struct App {
+    events: Events,
+    screens: Vec<StoryScreen>,
+    tabs: TabsState,
+}
+
+impl App {
+    fn new() -> App {
+        App {
+            events: Events::new(),
+            screens: vec![
+                StoryScreen::new(StoryType::TopStories),
+                StoryScreen::new(StoryType::NewStories),
+                StoryScreen::new(StoryType::BestStories),
+                StoryScreen::new(StoryType::AskStories),
+                StoryScreen::new(StoryType::ShowStories),
+                StoryScreen::new(StoryType::JobStories),
+            ],
+            tabs: TabsState::new()
+        }
+    }
+    fn draw<B: Backend>(&mut self, f: &mut Frame<B>) {
+        let chunks = Layout::default()
+            .direction(Direction::Vertical)
+            .margin(1)
+            .constraints(
+                [
+                    Constraint::Percentage(7),
+                    Constraint::Percentage(46),
+                    Constraint::Percentage(46),
+                ]
+                    .as_ref(),
+            )
+            .split(f.size());
+
+        self.screens[self.tabs.index].draw(f, chunks[1]);
+        let tabs = Tabs::default()
+            .block(Block::default().borders(Borders::ALL).title("Stories"))
+            .titles(self.tabs.titles.as_slice())
+            .select(self.tabs.index)
+            .style(Style::default().fg(Color::Cyan))
+            .highlight_style(Style::default().fg(Color::Yellow));
+        f.render_widget(tabs, chunks[0]);
+    }
+
+    fn next_story(&mut self) {
+        self.screens[self.tabs.index].next()
+    }
+
+    fn previous_story(&mut self) {
+        self.screens[self.tabs.index].previous()
+    }
+
+}
 
 fn main() -> Result<(), Box<dyn Error>> {
     let stdout = io::stdout().into_raw_mode()?;
@@ -32,45 +82,25 @@ fn main() -> Result<(), Box<dyn Error>> {
     let backend = TermionBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
     terminal.hide_cursor()?;
-    let events = Events::new();
-    let mut tabs: TabsState<'static> = TabsState::new();
-    let mut story = StoryScreen::new(StoryType::AskStories);
+
+    let mut app = App::new();
+
     loop {
         terminal.draw(|mut f| {
-            let chunks = Layout::default()
-                .direction(Direction::Vertical)
-                .margin(1)
-                .constraints(
-                    [
-                        Constraint::Percentage(7),
-                        Constraint::Percentage(83),
-                        Constraint::Percentage(10),
-                    ]
-                    .as_ref(),
-                )
-                .split(f.size());
-
-            story.draw(&mut f, chunks[1]);
-            let tabs = Tabs::default()
-                .block(Block::default().borders(Borders::ALL).title("Stories"))
-                .titles(tabs.titles.as_slice())
-                .select(tabs.index)
-                .style(Style::default().fg(Color::Cyan))
-                .highlight_style(Style::default().fg(Color::Yellow));
-            f.render_widget(tabs, chunks[0]);
+            app.draw(&mut f);
         })?;
-        match events.next()? {
+        match app.events.next()? {
             Event::Input(key) => match key {
                 Key::Char('q') => {
                     break;
                 }
-                Key::Right => tabs.next(),
-                Key::Left => tabs.previous(),
+                Key::Right => app.tabs.next(),
+                Key::Left => app.tabs.previous(),
                 Key::Down => {
-                    story.next();
+                    app.next_story();
                 }
                 Key::Up => {
-                    story.previous();
+                    app.previous_story();
                 }
                 _ => {}
             },
