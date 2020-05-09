@@ -3,7 +3,7 @@ use serde_json::{Value, Number, Map};
 
 use crate::hn_api::{get_stories, get_items, StoryType};
 
-const INITIAL_LOADED_ITEMS: usize = 30;
+const INITIAL_LOADED_ITEMS: usize = 20;
 
 pub struct StoryList {
     pub state: ListState,
@@ -30,9 +30,11 @@ impl StoryList {
             Some(i) => {
                 if i >= self.items.len() - 1 {
                     if i < self.ids.len() - 1 {
-                        self.items.append(get_items(&self.ids[i + 1..i + 2])
+                        self.items.append(get_items(&self.ids[i + 1..i + INITIAL_LOADED_ITEMS])
                             .expect("Could not get new item").as_mut());
-                        self.titles.push(self.items[self.items.len() - 1]["title"].to_string());
+                        for item in &self.items[i + 1..i + INITIAL_LOADED_ITEMS] {
+                            self.titles.push(item["title"].to_string())
+                        }
                         i + 1
                     } else {
                         0
