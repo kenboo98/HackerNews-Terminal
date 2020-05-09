@@ -1,15 +1,14 @@
-use crate::hn_api::StoryType;
-use crate::story_list::StoryList;
-use termion::raw::RawTerminal;
-use termion::screen::AlternateScreen;
+use tui::{
+    backend::Backend,
+    Frame,
+    widgets::{Borders, List},
+};
 use tui::layout::Rect;
 use tui::style::{Color, Modifier, Style};
 use tui::widgets::{Block, Text};
-use tui::{
-    backend::Backend,
-    widgets::{Borders, List},
-    Frame, Terminal,
-};
+
+use crate::hn_api::StoryType;
+use crate::story_list::StoryList;
 
 pub struct StoryScreen {
     pub story_list: StoryList,

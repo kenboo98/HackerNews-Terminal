@@ -1,25 +1,29 @@
+use std::error::Error;
 use std::io;
+
+use termion::event::Key;
 use termion::raw::IntoRawMode;
 use termion::screen::AlternateScreen;
-use tui::{backend::TermionBackend, layout::{Constraint, Direction, Layout}, style::{Color, Modifier, Style}, widgets::{Block, Borders, List, Tabs, Text}, Terminal, Frame};
-
-use serde_json::Value;
-
-mod event;
-mod hn_api;
-mod story_list;
-mod story_screen;
-mod tabs;
+use tui::{
+    backend::TermionBackend,
+    Frame,
+    layout::{Constraint, Direction, Layout},
+    style::{Color, Style},
+    Terminal,
+    widgets::{Block, Borders, Tabs}
+};
+use tui::backend::Backend;
 
 use crate::event::{Event, Events};
 use crate::hn_api::StoryType;
 use crate::story_screen::StoryScreen;
 use crate::tabs::TabsState;
-
-use std::borrow::Borrow;
-use std::error::Error;
-use termion::event::Key;
-use tui::backend::Backend;
+#[allow(dead_code)]
+mod event;
+mod hn_api;
+mod story_list;
+mod story_screen;
+mod tabs;
 
 struct App {
     events: Events,

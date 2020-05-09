@@ -1,7 +1,7 @@
+use serde_json::{Map, Value};
 use tui::widgets::ListState;
-use serde_json::{Value, Number, Map};
 
-use crate::hn_api::{get_stories, get_items, StoryType};
+use crate::hn_api::{get_items, get_stories, StoryType};
 
 const INITIAL_LOADED_ITEMS: usize = 20;
 

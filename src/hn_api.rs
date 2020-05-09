@@ -1,10 +1,9 @@
-use std::collections::HashMap;
-use reqwest::blocking;
-use reqwest::Client;
 use std::io::{Error, ErrorKind};
-use serde_json::{Value, Number, Map};
 
 use futures::future::join_all;
+use reqwest::blocking;
+use reqwest::Client;
+use serde_json::{Map, Number, Value};
 use tokio::runtime::Runtime;
 
 const URI_PREFIX: &str = "https://hacker-news.firebaseio.com/v0/";
