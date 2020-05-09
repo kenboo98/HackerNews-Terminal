@@ -22,6 +22,7 @@ impl StoryScreen {
             story_type,
         }
     }
+
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>, chunk: Rect) {
         let items = self.story_list.titles.iter().map(|i| Text::raw(i));
         let my_list = List::new(items)
@@ -32,7 +33,7 @@ impl StoryScreen {
                     .borders(Borders::ALL),
             )
             .style(Style::default().fg(Color::White))
-            .highlight_style(Style::default().modifier(Modifier::ITALIC))
+            .highlight_style(Style::default().modifier(Modifier::BOLD))
             .highlight_symbol(">>");
         f.render_stateful_widget(my_list, chunk, &mut self.story_list.state);
     }

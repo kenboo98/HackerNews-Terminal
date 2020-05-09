@@ -57,12 +57,14 @@ pub fn get_items(ids: &[String]) -> Result<Vec<Map<String, Value>>, Error> {
         )
     );
 
-
     let items: Vec<Map<String, Value>> = results
         .into_iter()
         .map(|result| {
             let resp = result.expect("Could not get response");
-            rt.block_on(resp.json()).expect("Could not get response text.")
+            match rt.block_on(resp.json()) {
+                Ok(json) => json,
+                Err(_) => Map::new()
+            }
         }).collect();
     Ok(items)
 }

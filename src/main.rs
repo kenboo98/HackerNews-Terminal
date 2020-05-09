@@ -90,9 +90,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut app = App::new();
 
     loop {
-        terminal.draw(|mut f| {
-            app.draw(&mut f);
-        })?;
+        terminal.draw(|mut f| { app.draw(&mut f);})?;
         match app.events.next()? {
             Event::Input(key) => match key {
                 Key::Char('q') => {
