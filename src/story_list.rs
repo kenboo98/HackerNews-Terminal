@@ -33,7 +33,7 @@ impl StoryList {
             None => ""
         };
 
-        let title = format!("{:^5} points | {:^3} comments | {} by {} ",
+        let title = format!("{:>4} points | {:>3} comments | {} by {} ",
                             score, n_comments, name, author);
 
         title.to_string()
