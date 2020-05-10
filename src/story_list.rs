@@ -17,15 +17,15 @@ impl StoryList {
 
     fn to_title(item: &Map<String, Value>) -> String {
         let score = match item.get("score") {
-            Some(s) => s.as_i64().expect("Could not convert score to str"),
+            Some(s) => s.as_i64().expect("Could not convert score to int"),
             None => 0
         };
         let author = match item.get("by") {
             Some(s) => s.as_str().expect("Could not convert author to str"),
             None => "None"
         };
-        let n_comments = match item.get("kids"){
-            Some(arr) => arr.as_array().expect("kids is not an array").len(),
+        let n_comments = match item.get("descendants"){
+            Some(s) => s.as_i64().expect("Could not get number of descendants"),
             None => 0
         };
         let name = match item.get("title") {
