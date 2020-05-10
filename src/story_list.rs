@@ -1,7 +1,7 @@
 use serde_json::{Map, Value};
 use tui::widgets::ListState;
 
-use crate::hn_api::{get_items, get_stories, StoryType};
+use crate::hn_api::{get_items, get_stories, ListType};
 use std::cmp::min;
 
 const INITIAL_LOADED_ITEMS: usize = 20;
@@ -39,7 +39,7 @@ impl StoryList {
         title.to_string()
 
     }
-    pub fn new(story_type: &StoryType) -> StoryList {
+    pub fn new(story_type: &ListType ) -> StoryList {
         let ids = get_stories(story_type).expect("Could not get IDs");
         let items = get_items(&ids[..INITIAL_LOADED_ITEMS]).expect("Could not get items");
         let titles = items.iter().map(|item| { StoryList::to_title(item) }).collect();

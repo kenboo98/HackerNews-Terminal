@@ -15,7 +15,7 @@ use tui::{
 use tui::backend::Backend;
 
 use crate::event::{Event, Events};
-use crate::hn_api::StoryType;
+use crate::hn_api::ListType;
 use crate::story_screen::StoryScreen;
 use crate::tabs::TabsState;
 #[allow(dead_code)]
@@ -24,6 +24,7 @@ mod hn_api;
 mod story_list;
 mod story_screen;
 mod tabs;
+mod story_block;
 
 struct App {
     events: Events,
@@ -36,12 +37,12 @@ impl App {
         App {
             events: Events::new(),
             screens: vec![
-                StoryScreen::new(StoryType::TopStories),
-                StoryScreen::new(StoryType::NewStories),
-                StoryScreen::new(StoryType::BestStories),
-                StoryScreen::new(StoryType::AskStories),
-                StoryScreen::new(StoryType::ShowStories),
-                StoryScreen::new(StoryType::JobStories),
+                StoryScreen::new(ListType::TopStories),
+                StoryScreen::new(ListType::NewStories),
+                StoryScreen::new(ListType::BestStories),
+                StoryScreen::new(ListType::AskStories),
+                StoryScreen::new(ListType::ShowStories),
+                StoryScreen::new(ListType::JobStories),
             ],
             tabs: TabsState::new()
         }

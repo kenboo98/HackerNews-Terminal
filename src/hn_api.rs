@@ -17,7 +17,7 @@ const URI_JOB_STORIES: &str = "jobstories";
 
 const URI_ITEM: &str = "item/";
 
-pub enum StoryType {
+pub enum ListType {
     TopStories,
     NewStories,
     BestStories,
@@ -26,14 +26,14 @@ pub enum StoryType {
     JobStories,
 }
 
-pub fn get_stories(story_type: &StoryType) -> Result<Vec<String>, Error> {
+pub fn get_stories(story_type: &ListType) -> Result<Vec<String>, Error> {
     let endpoint = match story_type {
-        StoryType::TopStories => URI_TOP_STORIES,
-        StoryType::NewStories => URI_NEW_STORIES,
-        StoryType::BestStories => URI_BEST_STORIES,
-        StoryType::AskStories => URI_ASK_STORIES,
-        StoryType::ShowStories => URI_SHOW_STORIES,
-        StoryType::JobStories => URI_JOB_STORIES
+        ListType::TopStories => URI_TOP_STORIES,
+        ListType::NewStories => URI_NEW_STORIES,
+        ListType::BestStories => URI_BEST_STORIES,
+        ListType::AskStories => URI_ASK_STORIES,
+        ListType::ShowStories => URI_SHOW_STORIES,
+        ListType::JobStories => URI_JOB_STORIES
     };
     let resp = match blocking::get(format!("{}{}.json", URI_PREFIX, endpoint).as_str()) {
         Ok(resp) => resp,

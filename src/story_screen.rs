@@ -7,16 +7,17 @@ use tui::layout::Rect;
 use tui::style::{Color, Modifier, Style};
 use tui::widgets::{Block, Text};
 
-use crate::hn_api::StoryType;
+use crate::hn_api::ListType;
 use crate::story_list::StoryList;
+use crate::story_block::StoryBlock;
 
 pub struct StoryScreen {
     pub story_list: StoryList,
-    pub story_type: StoryType,
+    pub story_type: ListType,
 }
 
 impl StoryScreen {
-    pub fn new(story_type: StoryType) -> StoryScreen {
+    pub fn new(story_type: ListType) -> StoryScreen {
         StoryScreen {
             story_list: StoryList::new(&story_type),
             story_type,
