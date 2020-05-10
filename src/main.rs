@@ -54,8 +54,7 @@ impl App {
             .constraints(
                 [
                     Constraint::Percentage(7),
-                    Constraint::Percentage(46),
-                    Constraint::Percentage(46),
+                    Constraint::Percentage(93),
                 ]
                     .as_ref(),
             )
@@ -78,7 +77,9 @@ impl App {
     fn previous_story(&mut self) {
         self.screens[self.tabs.index].previous()
     }
-
+    fn select(&mut self) {
+        self.screens[self.tabs.index].select()
+    }
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -104,6 +105,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                 }
                 Key::Up => {
                     app.previous_story();
+                },
+                Key::Char(' ') => {
+                    app.select();
                 }
                 _ => {}
             },
