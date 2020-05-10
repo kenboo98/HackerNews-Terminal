@@ -5,6 +5,8 @@ use tui::Frame;
 use tui::layout::{Rect, Layout, Direction, Constraint, Alignment};
 use tui::style::{Style, Color};
 use tui::widgets::{Block, Text, Borders, Paragraph};
+use ammonia::Builder;
+use std::collections::HashSet;
 
 pub enum StoryType {
     Job,
@@ -57,10 +59,16 @@ impl StoryBlock {
             Some(t) => t.as_str().expect("Could not get link").to_string(),
             None => "No Link".to_string()
         };
-        let text = match item.get("text") {
+        let text_raw = match item.get("text") {
             Some(t) => t.as_str().expect("Could not get Text").to_string(),
             None => "No Text".to_string()
         };
+
+        // Remove HTML tags using ammonia
+        let text = Builder::new()
+            .tags(HashSet::new())
+            .clean(text_raw.as_str())
+            .to_string();
 
         Some(
             StoryBlock {
@@ -88,10 +96,10 @@ impl StoryBlock {
 
 
         let info = [
+            Text::raw(format!("Link: {}\n", self.link)),
+            Text::raw(format!("Points : {} - Comments : {} - Author: {} \n",
+                              self.score, self.n_comments, self.author)),
             Text::raw(self.text.as_str()),
-            Text::raw(format!("\nLink: {}", self.link)),
-            Text::raw(format!("\nPoints : {} - Comments : {} - Author: {} ",
-                              self.score, self.n_comments, self.author))
         ];
 
         let info_p = Paragraph::new(info.iter())
