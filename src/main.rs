@@ -18,7 +18,7 @@ use crate::event::{Event, Events};
 use crate::hn_api::ListType;
 use crate::story_screen::StoryScreen;
 use crate::tabs::TabsState;
-use crate::comment_block::Comment;
+use crate::comment_block::{Comment, CommentBlock};
 #[allow(dead_code)]
 mod event;
 mod hn_api;
@@ -185,9 +185,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         23133706,
         23135718
     ];
-    let coms = hn_api::get_comments(kids.as_slice()).unwrap();
-    for c in coms{
-        print!("{:?}", c.text);
+    let coms = CommentBlock::new(kids.as_slice());
+    for c in coms.comment_strings{
+        print!("{}\n", c);
     }
     Ok(())
 }
