@@ -39,6 +39,7 @@ impl StoryBlock {
                 return None;
             }
         };
+
         let score = match item.get("score") {
             Some(s) => s.as_i64().expect("Could not convert score to int"),
             None => 0
@@ -87,8 +88,8 @@ impl StoryBlock {
             .margin(1)
             .constraints(
                 [
-                    Constraint::Percentage(30),
-                    Constraint::Percentage(70),
+                    Constraint::Percentage(35),
+                    Constraint::Percentage(65),
                 ]
                     .as_ref(),
             )

@@ -1,10 +1,11 @@
 use std::io::{Error, ErrorKind};
-
+use async_recursion::async_recursion;
 use futures::future::join_all;
 use reqwest::blocking;
 use reqwest::Client;
 use serde_json::{Map, Number, Value};
 use tokio::runtime::Runtime;
+use crate::comment_block::Comment;
 
 const URI_PREFIX: &str = "https://hacker-news.firebaseio.com/v0/";
 
@@ -67,5 +68,51 @@ pub fn get_items(ids: &[String]) -> Result<Vec<Map<String, Value>>, Error> {
             }
         }).collect();
     Ok(items)
+}
+
+
+#[async_recursion]
+async fn comment_helper(ids: &[i64]) -> Vec<Comment> {
+    let results = join_all(
+        ids
+            .into_iter()
+            .map(|id| {
+                Client::new().get(format!("{}{}{}.json", URI_PREFIX, URI_ITEM, id).as_str()).send()
+            })
+    ).await;
+    let comments = join_all(results.into_iter()
+        .map(|result| async {
+            let resp = result.expect("Could not get response for comment");
+            let json: Map<String, Value> = resp.json().await.unwrap();
+            let comment = match json.get("text") {
+                Some(j) => j.as_str().unwrap().to_string(),
+                None => "".to_string(),
+            };
+            let kids = match json.get("kids") {
+                Some(kids) => {
+                    let kids: Vec<i64> = kids.as_array()
+                        .unwrap()
+                        .into_iter()
+                        .map(|kid|{
+                            kid.as_i64().unwrap()
+                         }).collect();
+                    Some(comment_helper(kids.as_slice()).await)
+                },
+                None => None
+            };
+            Comment{
+                text: comment,
+                replies: kids
+            }
+        })).await;
+
+    comments
+
+}
+
+pub fn get_comments(ids: &[i64]) -> Result<Vec<Comment>, Error> {
+    let mut rt = Runtime::new()?;
+    let mut  client = Client::new();
+    Ok(rt.block_on(comment_helper(ids)))
 }
 
