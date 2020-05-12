@@ -1,6 +1,11 @@
 use crate::hn_api::get_comments;
 use ammonia::Builder;
 use std::collections::HashSet;
+use tui::Frame;
+use tui::layout::{Rect, Alignment};
+use tui::backend::Backend;
+use tui::widgets::{Paragraph, Block, Borders, Text};
+use serde_json::{Map, Value};
 
 pub struct Comment {
     pub text: String,
@@ -9,7 +14,7 @@ pub struct Comment {
 
 pub struct CommentBlock {
     pub comments: Vec<Comment>,
-    pub comment_strings: Vec<String>
+    pub comment_strings: Vec<String>,
 }
 
 impl CommentBlock {
@@ -21,19 +26,23 @@ impl CommentBlock {
                 for reply in replies {
                     result.append(&mut CommentBlock::helper(reply, depth + 1, builder));
                 }
-            },
+            }
             None => {}
         }
-        return result
+        return result;
     }
-    pub fn new(comment_ids: &[i64]) -> CommentBlock {
-        let comments = match get_comments(comment_ids) {
+    pub fn new(item: &Map<String, Value>) -> Option<CommentBlock> {
+        let comment_ids = match item.get("kids") {
+            Some(kids) => kids.as_array().unwrap(),
+            None => return { None }
+        };
+
+        let comment_ids: Vec<i64> = comment_ids.into_iter().map(|id| id.as_i64().unwrap()).collect();
+
+        let comments = match get_comments(comment_ids.as_slice()) {
             Ok(c) => c,
             Err(_) => {
-                return CommentBlock {
-                   comments: Vec::new(),
-                   comment_strings: Vec::new()
-               };
+                return None;
             }
         };
         let mut builder = Builder::new();
@@ -43,11 +52,19 @@ impl CommentBlock {
             comment_strings.append(&mut CommentBlock::helper(c, 1, &tag_cleaner));
         };
 
-        CommentBlock {
+        Some(CommentBlock {
             comments,
-            comment_strings
-        }
-
+            comment_strings,
+        })
     }
 
+    pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>, chunk: Rect) {
+        let comment_text: Vec<Text> = self.comment_strings.iter().map(|c| Text::raw(c)).collect();
+        let paragraph = Paragraph::new(comment_text.iter())
+            .block(Block::default().title("Comments").borders(Borders::ALL))
+            .alignment(Alignment::Left)
+            .wrap(true);
+
+        f.render_widget(paragraph, chunk);
+    }
 }

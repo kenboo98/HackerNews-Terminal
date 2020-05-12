@@ -83,7 +83,10 @@ async fn comment_helper(ids: &[i64]) -> Vec<Comment> {
     let comments = join_all(results.into_iter()
         .map(|result| async {
             let resp = result.expect("Could not get response for comment");
-            let json: Map<String, Value> = resp.json().await.unwrap();
+            let json: Map<String, Value> = match resp.json().await {
+                Ok(json) => json,
+                Err(_) => Map::new()
+            };
             let comment = match json.get("text") {
                 Some(j) => j.as_str().unwrap().to_string(),
                 None => "".to_string(),

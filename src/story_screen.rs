@@ -11,11 +11,13 @@ use crate::hn_api::ListType;
 use crate::story_list::StoryList;
 use crate::story_block::StoryBlock;
 use std::borrow::Borrow;
+use crate::comment_block::CommentBlock;
 
 pub struct StoryScreen {
     pub story_list: StoryList,
     pub story_type: ListType,
-    pub story_block: Option<StoryBlock>
+    pub story_block: Option<StoryBlock>,
+    pub comment_block: Option<CommentBlock>
 }
 
 impl StoryScreen {
@@ -23,7 +25,8 @@ impl StoryScreen {
         StoryScreen {
             story_list: StoryList::new(&story_type),
             story_type,
-            story_block: None
+            story_block: None,
+            comment_block: None,
         }
     }
 
@@ -34,7 +37,8 @@ impl StoryScreen {
             .constraints(
                 [
                     Constraint::Percentage(30),
-                    Constraint::Percentage(70),
+                    Constraint::Percentage(25),
+                    Constraint::Percentage(35)
                 ]
                     .as_ref(),
             )
@@ -57,6 +61,11 @@ impl StoryScreen {
             None => {}
         }
 
+        match self.comment_block.as_mut() {
+            Some(c) => c.draw(f, story_chunks[2]),
+            None => {},
+        }
+
     }
     pub fn next(&mut self) {
         self.story_list.next();
@@ -67,7 +76,15 @@ impl StoryScreen {
 
     pub fn select(&mut self) {
         let selected = self.story_list.state.selected().unwrap();
-        self.story_block.replace(StoryBlock::new(self.story_list.items[selected].borrow()).unwrap());
+        if let Some(s) = StoryBlock::new(self.story_list.items[selected].borrow()) {
+            self.story_block.replace(s);
+        };
+
+        if let Some(c) = CommentBlock::new(self.story_list.items[selected].borrow()) {
+            self.comment_block.replace(c);
+        };
+
+
     }
 
 }

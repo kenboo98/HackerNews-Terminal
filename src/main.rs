@@ -85,109 +85,37 @@ impl App {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-//    let stdout = io::stdout().into_raw_mode()?;
-//    let stdout = AlternateScreen::from(stdout);
-//    let backend = TermionBackend::new(stdout);
-//    let mut terminal = Terminal::new(backend)?;
-//    terminal.hide_cursor()?;
-//
-//    let mut app = App::new();
-//
-//    loop {
-//        terminal.draw(|mut f| { app.draw(&mut f);})?;
-//        match app.events.next()? {
-//            Event::Input(key) => match key {
-//                Key::Char('q') => {
-//                    break;
-//                }
-//                Key::Right => app.tabs.next(),
-//                Key::Left => app.tabs.previous(),
-//                Key::Down => {
-//                    app.next_story();
-//                }
-//                Key::Up => {
-//                    app.previous_story();
-//                },
-//                Key::Char(' ') => {
-//                    app.select();
-//                }
-//                _ => {}
-//            },
-//            _ => {}
-//        }
-//    }
-    let kids:Vec<i64> = vec![
-        23133642,
-        23133565,
-        23135659,
-        23138819,
-        23135184,
-        23135434,
-        23135467,
-        23133584,
-        23135636,
-        23136343,
-        23135565,
-        23133733,
-        23135450,
-        23138057,
-        23135596,
-        23133868,
-        23138642,
-        23137218,
-        23133836,
-        23133891,
-        23133653,
-        23135956,
-        23137800,
-        23138538,
-        23133620,
-        23138631,
-        23133894,
-        23136152,
-        23135125,
-        23133775,
-        23136039,
-        23137912,
-        23135111,
-        23135167,
-        23136074,
-        23135529,
-        23133803,
-        23138410,
-        23135194,
-        23137060,
-        23135962,
-        23133885,
-        23135475,
-        23135013,
-        23133648,
-        23135446,
-        23134556,
-        23137247,
-        23138452,
-        23133849,
-        23136283,
-        23135622,
-        23136103,
-        23136823,
-        23133649,
-        23136600,
-        23134197,
-        23133641,
-        23135666,
-        23135584,
-        23135545,
-        23136194,
-        23138715,
-        23133617,
-        23137124,
-        23133706,
-        23135718
-    ];
-    let coms = CommentBlock::new(kids.as_slice());
-    for c in coms.comment_strings{
-        print!("{}\n", c);
+    let stdout = io::stdout().into_raw_mode()?;
+    let stdout = AlternateScreen::from(stdout);
+    let backend = TermionBackend::new(stdout);
+    let mut terminal = Terminal::new(backend)?;
+    terminal.hide_cursor()?;
+
+    let mut app = App::new();
+
+    loop {
+        terminal.draw(|mut f| { app.draw(&mut f);})?;
+        match app.events.next()? {
+            Event::Input(key) => match key {
+                Key::Char('q') => {
+                    break;
+                }
+                Key::Right => app.tabs.next(),
+                Key::Left => app.tabs.previous(),
+                Key::Down => {
+                    app.next_story();
+                }
+                Key::Up => {
+                    app.previous_story();
+                },
+                Key::Char(' ') => {
+                    app.select();
+                }
+                _ => {}
+            },
+            _ => {}
+        }
     }
+
     Ok(())
 }

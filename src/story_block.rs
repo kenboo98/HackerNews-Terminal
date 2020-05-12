@@ -83,18 +83,6 @@ impl StoryBlock {
             })
     }
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>, chunk: Rect) {
-        let story_chunks = Layout::default()
-            .direction(Direction::Vertical)
-            .margin(1)
-            .constraints(
-                [
-                    Constraint::Percentage(35),
-                    Constraint::Percentage(65),
-                ]
-                    .as_ref(),
-            )
-            .split(chunk);
-
 
         let info = [
             Text::raw(format!("Link: {}\n", self.link)),
@@ -109,7 +97,7 @@ impl StoryBlock {
             .alignment(Alignment::Left)
             .wrap(true);
 
-        f.render_widget(info_p, story_chunks[0]);
+        f.render_widget(info_p, chunk);
 
     }
 
