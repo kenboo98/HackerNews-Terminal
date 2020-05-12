@@ -4,8 +4,9 @@ use std::collections::HashSet;
 use tui::Frame;
 use tui::layout::{Rect, Alignment};
 use tui::backend::Backend;
-use tui::widgets::{Paragraph, Block, Borders, Text};
+use tui::widgets::{Paragraph, Block, Borders, Text, BorderType};
 use serde_json::{Map, Value};
+use tui::style::Style;
 
 pub struct Comment {
     pub text: String,
@@ -15,6 +16,7 @@ pub struct Comment {
 pub struct CommentBlock {
     pub comments: Vec<Comment>,
     pub comment_strings: Vec<String>,
+    pub focused: bool,
     scroll: u16,
 }
 
@@ -56,14 +58,21 @@ impl CommentBlock {
         Some(CommentBlock {
             comments,
             comment_strings,
+            focused: false,
             scroll: 0,
         })
     }
 
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>, chunk: Rect) {
         let comment_text: Vec<Text> = self.comment_strings.iter().map(|c| Text::raw(c)).collect();
+
+        let mut block = Block::default().title("Comments").borders(Borders::ALL);
+        if self.focused {
+            block = block.border_type(BorderType::Double);
+        }
+
         let paragraph = Paragraph::new(comment_text.iter())
-            .block(Block::default().title("Comments").borders(Borders::ALL))
+            .block(block)
             .alignment(Alignment::Left)
             .wrap(true)
             .scroll(self.scroll);
@@ -74,6 +83,8 @@ impl CommentBlock {
         self.scroll += 1
     }
     pub fn scroll_up(&mut self) {
-        self.scroll -= 1
+        if self.scroll > 0 {
+            self.scroll -= 1
+        }
     }
 }

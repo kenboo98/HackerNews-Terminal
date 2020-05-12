@@ -2,8 +2,8 @@ use serde_json::{Map, Value};
 use tui::backend::Backend;
 use tui::Frame;
 use tui::layout::{Rect, Layout, Direction, Constraint, Alignment};
-use tui::style::{Style, Color};
-use tui::widgets::{Block, Text, Borders, Paragraph};
+use tui::style::{Style, Modifier, Color};
+use tui::widgets::{Block, Text, Borders, Paragraph, BorderType};
 use ammonia::Builder;
 use std::collections::HashSet;
 
@@ -21,7 +21,8 @@ pub struct StoryBlock {
     pub text: String,
     pub score: i64,
     pub author: String,
-    scroll: u16
+    pub focused: bool,
+    scroll: u16,
 }
 
 impl StoryBlock {
@@ -80,6 +81,7 @@ impl StoryBlock {
                 text,
                 score,
                 author,
+                focused: false,
                 scroll: 0
             })
     }
@@ -92,8 +94,13 @@ impl StoryBlock {
             Text::raw(self.text.as_str()),
         ];
 
+        let mut block = Block::default().title("Info").borders(Borders::ALL);
+        if self.focused {
+            block = block.border_type(BorderType::Double);
+        }
+
         let info_p = Paragraph::new(info.iter())
-            .block(Block::default().title(self.title.as_str()).borders(Borders::ALL))
+            .block(block)
             .style(Style::default().fg(Color::White))
             .alignment(Alignment::Left)
             .wrap(true)
@@ -107,6 +114,8 @@ impl StoryBlock {
         self.scroll += 1
     }
     pub fn scroll_up(&mut self) {
-        self.scroll -= 1
+        if self.scroll > 0 {
+            self.scroll -= 1
+        }
     }
 }

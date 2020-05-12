@@ -1,8 +1,12 @@
 use serde_json::{Map, Value};
-use tui::widgets::ListState;
+use tui::widgets::{ListState, Block, BorderType, List, Text, Borders};
 
 use crate::hn_api::{get_items, get_stories, ListType};
 use std::cmp::min;
+use tui::backend::Backend;
+use tui::Frame;
+use tui::style::{Color, Modifier, Style};
+use tui::layout::Rect;
 
 const INITIAL_LOADED_ITEMS: usize = 20;
 
@@ -11,6 +15,7 @@ pub struct StoryList {
     pub items: Vec<Map<String, Value>>,
     pub ids: Vec<String>,
     pub titles: Vec<String>,
+    pub focused: bool
 }
 
 impl StoryList {
@@ -43,11 +48,14 @@ impl StoryList {
         let ids = get_stories(story_type).expect("Could not get IDs");
         let items = get_items(&ids[..INITIAL_LOADED_ITEMS]).expect("Could not get items");
         let titles = items.iter().map(|item| { StoryList::to_title(item) }).collect();
+        let mut state = ListState::default();
+        state.select(Some(0));
         StoryList {
-            state: ListState::default(),
+            state,
             items,
             ids,
             titles,
+            focused: true,
         }
     }
 
@@ -93,4 +101,18 @@ impl StoryList {
         self.state.select(None);
     }
 
+    pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>, chunk: Rect) {
+        let mut block = Block::default().title("Hacker News").borders(Borders::ALL);
+        if self.focused {
+            block = block.border_type(BorderType::Double);
+        }
+
+        let items = self.titles.iter().map(|i| Text::raw(i));
+        let my_list = List::new(items)
+            .block(block)
+            .style(Style::default().fg(Color::White))
+            .highlight_style(Style::default().modifier(Modifier::BOLD))
+            .highlight_symbol(">>");
+        f.render_stateful_widget(my_list, chunk, &mut self.state);
+    }
 }

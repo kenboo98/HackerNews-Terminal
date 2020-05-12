@@ -45,24 +45,14 @@ impl StoryScreen {
             .constraints(
                 [
                     Constraint::Percentage(30),
-                    Constraint::Percentage(25),
-                    Constraint::Percentage(35)
+                    Constraint::Percentage(15),
+                    Constraint::Percentage(55)
                 ]
                     .as_ref(),
             )
             .split(chunk);
-        let items = self.story_list.titles.iter().map(|i| Text::raw(i));
-        let my_list = List::new(items)
-            .block(
-                Block::default()
-                    .title("HACKER NEWS")
-                    .title_style(Style::default().fg(Color::LightRed))
-                    .borders(Borders::ALL),
-            )
-            .style(Style::default().fg(Color::White))
-            .highlight_style(Style::default().modifier(Modifier::BOLD))
-            .highlight_symbol(">>");
-        f.render_stateful_widget(my_list, story_chunks[0], &mut self.story_list.state);
+
+        self.story_list.draw(f, story_chunks[0]);
 
         match self.story_block.as_mut() {
             Some(s) => s.draw(f, story_chunks[1]),
@@ -123,9 +113,25 @@ impl StoryScreen {
 
     pub fn focus(&mut self) {
         match self.focused {
-            Focus::List => {self.focused = Focus::Info},
-            Focus::Info => {self.focused = Focus::Comments},
-            Focus::Comments => {self.focused = Focus::Comments}
+            Focus::List => {
+                if let Some(s) = self.story_block.as_mut(){
+                    self.focused = Focus::Info;
+                    self.story_list.focused = false;
+                    s.focused = true;
+                }
+            },
+            Focus::Info => {
+                if let Some(c) = self.comment_block.as_mut(){
+                    self.focused = Focus::Comments;
+                    self.story_block.as_mut().unwrap().focused = false;
+                    c.focused = true;
+                }
+            },
+            Focus::Comments => {
+                self.focused = Focus::List;
+                self.comment_block.as_mut().unwrap().focused = false;
+                self.story_list.focused = true;
+            }
         }
     }
 
