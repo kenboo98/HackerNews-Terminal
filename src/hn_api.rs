@@ -73,11 +73,12 @@ pub fn get_items(ids: &[String]) -> Result<Vec<Map<String, Value>>, Error> {
 
 #[async_recursion]
 async fn comment_helper(ids: &[i64]) -> Vec<Comment> {
+    let client = Client::new();
     let results = join_all(
         ids
             .into_iter()
             .map(|id| {
-                Client::new().get(format!("{}{}{}.json", URI_PREFIX, URI_ITEM, id).as_str()).send()
+                client.get(format!("{}{}{}.json", URI_PREFIX, URI_ITEM, id).as_str()).send()
             })
     ).await;
     let comments = join_all(results.into_iter()
@@ -115,7 +116,7 @@ async fn comment_helper(ids: &[i64]) -> Vec<Comment> {
 
 pub fn get_comments(ids: &[i64]) -> Result<Vec<Comment>, Error> {
     let mut rt = Runtime::new()?;
-    let mut  client = Client::new();
+    let mut client = Client::new();
     Ok(rt.block_on(comment_helper(ids)))
 }
 
