@@ -13,11 +13,18 @@ use crate::story_block::StoryBlock;
 use std::borrow::Borrow;
 use crate::comment_block::CommentBlock;
 
+// Struct to select each block to scroll
+enum Focus {
+    List,
+    Info,
+    Comments,
+}
 pub struct StoryScreen {
     pub story_list: StoryList,
     pub story_type: ListType,
     pub story_block: Option<StoryBlock>,
-    pub comment_block: Option<CommentBlock>
+    pub comment_block: Option<CommentBlock>,
+    focused: Focus,
 }
 
 impl StoryScreen {
@@ -27,6 +34,7 @@ impl StoryScreen {
             story_type,
             story_block: None,
             comment_block: None,
+            focused: Focus::List,
         }
     }
 
@@ -67,11 +75,39 @@ impl StoryScreen {
         }
 
     }
-    pub fn next(&mut self) {
-        self.story_list.next();
+    pub fn down(&mut self) {
+        match self.focused {
+            Focus::List => {self.story_list.next()},
+            Focus::Info => {
+                match self.story_block.as_mut() {
+                    Some(s) => s.scroll_down(),
+                    None => {}
+                }
+            },
+            Focus::Comments => {
+                match self.comment_block.as_mut() {
+                    Some(c) => c.scroll_down(),
+                    None => {}
+                }
+            }
+        }
     }
-    pub fn previous(&mut self) {
-        self.story_list.previous();
+    pub fn up(&mut self) {
+        match self.focused {
+            Focus::List => {self.story_list.previous()},
+            Focus::Info => {
+                match self.story_block.as_mut() {
+                    Some(s) => s.scroll_up(),
+                    None => {}
+                }
+            },
+            Focus::Comments => {
+                match self.comment_block.as_mut() {
+                    Some(c) => c.scroll_up(),
+                    None => {}
+                }
+            }
+        };
     }
 
     pub fn select(&mut self) {
@@ -83,8 +119,14 @@ impl StoryScreen {
         if let Some(c) = CommentBlock::new(self.story_list.items[selected].borrow()) {
             self.comment_block.replace(c);
         };
+    }
 
-
+    pub fn focus(&mut self) {
+        match self.focused {
+            Focus::List => {self.focused = Focus::Info},
+            Focus::Info => {self.focused = Focus::Comments},
+            Focus::Comments => {self.focused = Focus::Comments}
+        }
     }
 
 }

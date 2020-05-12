@@ -18,7 +18,7 @@ use crate::event::{Event, Events};
 use crate::hn_api::ListType;
 use crate::story_screen::StoryScreen;
 use crate::tabs::TabsState;
-use crate::comment_block::{Comment, CommentBlock};
+
 #[allow(dead_code)]
 mod event;
 mod hn_api;
@@ -72,16 +72,17 @@ impl App {
         f.render_widget(tabs, chunks[0]);
     }
 
-    fn next_story(&mut self) {
-        self.screens[self.tabs.index].next()
+    fn down(&mut self) {
+        self.screens[self.tabs.index].down()
     }
 
-    fn previous_story(&mut self) {
-        self.screens[self.tabs.index].previous()
+    fn up(&mut self) {
+        self.screens[self.tabs.index].up()
     }
     fn select(&mut self) {
         self.screens[self.tabs.index].select()
     }
+    fn focus(&mut self) {self.screens[self.tabs.index].focus()}
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -103,14 +104,18 @@ fn main() -> Result<(), Box<dyn Error>> {
                 Key::Right => app.tabs.next(),
                 Key::Left => app.tabs.previous(),
                 Key::Down => {
-                    app.next_story();
+                    app.down();
                 }
                 Key::Up => {
-                    app.previous_story();
+                    app.up();
                 },
-                Key::Char(' ') => {
+                Key::Char('\n') => {
                     app.select();
+                },
+                Key::Char('\x09') => {
+                    app.focus();
                 }
+
                 _ => {}
             },
             _ => {}

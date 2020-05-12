@@ -1,5 +1,4 @@
 use serde_json::{Map, Value};
-use crate::story_block::StoryType::Job;
 use tui::backend::Backend;
 use tui::Frame;
 use tui::layout::{Rect, Layout, Direction, Constraint, Alignment};
@@ -22,6 +21,7 @@ pub struct StoryBlock {
     pub text: String,
     pub score: i64,
     pub author: String,
+    scroll: u16
 }
 
 impl StoryBlock {
@@ -80,6 +80,7 @@ impl StoryBlock {
                 text,
                 score,
                 author,
+                scroll: 0
             })
     }
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>, chunk: Rect) {
@@ -95,10 +96,17 @@ impl StoryBlock {
             .block(Block::default().title(self.title.as_str()).borders(Borders::ALL))
             .style(Style::default().fg(Color::White))
             .alignment(Alignment::Left)
-            .wrap(true);
+            .wrap(true)
+            .scroll(self.scroll);
 
         f.render_widget(info_p, chunk);
 
     }
 
+    pub fn scroll_down(&mut self) {
+        self.scroll += 1
+    }
+    pub fn scroll_up(&mut self) {
+        self.scroll -= 1
+    }
 }

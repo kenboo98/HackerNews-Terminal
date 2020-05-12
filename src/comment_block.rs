@@ -15,6 +15,7 @@ pub struct Comment {
 pub struct CommentBlock {
     pub comments: Vec<Comment>,
     pub comment_strings: Vec<String>,
+    scroll: u16,
 }
 
 impl CommentBlock {
@@ -55,6 +56,7 @@ impl CommentBlock {
         Some(CommentBlock {
             comments,
             comment_strings,
+            scroll: 0,
         })
     }
 
@@ -63,8 +65,15 @@ impl CommentBlock {
         let paragraph = Paragraph::new(comment_text.iter())
             .block(Block::default().title("Comments").borders(Borders::ALL))
             .alignment(Alignment::Left)
-            .wrap(true);
+            .wrap(true)
+            .scroll(self.scroll);
 
         f.render_widget(paragraph, chunk);
+    }
+    pub fn scroll_down(&mut self) {
+        self.scroll += 1
+    }
+    pub fn scroll_up(&mut self) {
+        self.scroll -= 1
     }
 }

@@ -116,7 +116,6 @@ async fn comment_helper(ids: &[i64]) -> Vec<Comment> {
 
 pub fn get_comments(ids: &[i64]) -> Result<Vec<Comment>, Error> {
     let mut rt = Runtime::new()?;
-    let mut client = Client::new();
     Ok(rt.block_on(comment_helper(ids)))
 }
 
