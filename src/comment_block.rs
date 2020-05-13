@@ -1,15 +1,15 @@
-use crate::hn_api::get_comments;
-use crate::colors::{HNStyles, get_style};
+use std::cmp::min;
+use std::collections::HashSet;
 
 use ammonia::Builder;
-use std::collections::HashSet;
-use tui::Frame;
-use tui::layout::{Rect, Alignment};
-use tui::backend::Backend;
-use tui::widgets::{Paragraph, Block, Borders, Text, BorderType};
 use serde_json::{Map, Value};
-use tui::style::Style;
-use std::cmp::min;
+use tui::backend::Backend;
+use tui::Frame;
+use tui::layout::{Alignment, Rect};
+use tui::widgets::{Block, Borders, BorderType, Paragraph, Text};
+
+use crate::colors::{get_style, HNStyles};
+use crate::hn_api::get_comments;
 
 const MAX_DEPTH: u16 = 10;
 pub struct Comment {

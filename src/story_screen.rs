@@ -1,17 +1,15 @@
+use std::borrow::Borrow;
+
 use tui::{
     backend::Backend,
-    Frame,
-    widgets::{Borders, List},
+    Frame
 };
-use tui::layout::{Rect, Layout, Direction, Constraint};
-use tui::style::{Color, Modifier, Style};
-use tui::widgets::{Block, Text};
+use tui::layout::{Constraint, Direction, Layout, Rect};
 
-use crate::hn_api::ListType;
-use crate::story_list::StoryList;
-use crate::story_block::StoryBlock;
-use std::borrow::Borrow;
 use crate::comment_block::CommentBlock;
+use crate::hn_api::ListType;
+use crate::story_block::StoryBlock;
+use crate::story_list::StoryList;
 
 // Struct to select each block to scroll
 enum Focus {
@@ -19,6 +17,7 @@ enum Focus {
     Info,
     Comments,
 }
+
 pub struct StoryScreen {
     pub story_list: StoryList,
     pub story_type: ListType,
@@ -61,19 +60,18 @@ impl StoryScreen {
 
         match self.comment_block.as_mut() {
             Some(c) => c.draw(f, story_chunks[2]),
-            None => {},
+            None => {}
         }
-
     }
     pub fn down(&mut self) {
         match self.focused {
-            Focus::List => {self.story_list.next()},
+            Focus::List => { self.story_list.next() }
             Focus::Info => {
                 match self.story_block.as_mut() {
                     Some(s) => s.scroll_down(),
                     None => {}
                 }
-            },
+            }
             Focus::Comments => {
                 match self.comment_block.as_mut() {
                     Some(c) => c.scroll_down(),
@@ -84,13 +82,13 @@ impl StoryScreen {
     }
     pub fn up(&mut self) {
         match self.focused {
-            Focus::List => {self.story_list.previous()},
+            Focus::List => { self.story_list.previous() }
             Focus::Info => {
                 match self.story_block.as_mut() {
                     Some(s) => s.scroll_up(),
                     None => {}
                 }
-            },
+            }
             Focus::Comments => {
                 match self.comment_block.as_mut() {
                     Some(c) => c.scroll_up(),
@@ -114,19 +112,19 @@ impl StoryScreen {
     pub fn focus(&mut self) {
         match self.focused {
             Focus::List => {
-                if let Some(s) = self.story_block.as_mut(){
+                if let Some(s) = self.story_block.as_mut() {
                     self.focused = Focus::Info;
                     self.story_list.focused = false;
                     s.focused = true;
                 }
-            },
+            }
             Focus::Info => {
-                if let Some(c) = self.comment_block.as_mut(){
+                if let Some(c) = self.comment_block.as_mut() {
                     self.focused = Focus::Comments;
                     self.story_block.as_mut().unwrap().focused = false;
                     c.focused = true;
                 }
-            },
+            }
             Focus::Comments => {
                 self.focused = Focus::List;
                 self.comment_block.as_mut().unwrap().focused = false;
@@ -134,5 +132,4 @@ impl StoryScreen {
             }
         }
     }
-
 }

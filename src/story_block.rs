@@ -1,14 +1,13 @@
+use std::collections::HashSet;
+
+use ammonia::Builder;
 use serde_json::{Map, Value};
 use tui::backend::Backend;
 use tui::Frame;
-use tui::layout::{Rect, Layout, Direction, Constraint, Alignment};
-use tui::style::{Style, Modifier, Color};
-use tui::widgets::{Block, Text, Borders, Paragraph, BorderType};
-use ammonia::Builder;
-use std::collections::HashSet;
+use tui::layout::{Alignment, Rect};
+use tui::widgets::{Block, Borders, BorderType, Paragraph, Text};
 
-use crate::colors::{HNStyles, get_style};
-use crate::colors::HNStyles::OrangeTitle;
+use crate::colors::{get_style, HNStyles};
 
 pub enum StoryType {
     Job,
@@ -85,11 +84,10 @@ impl StoryBlock {
                 score,
                 author,
                 focused: false,
-                scroll: 0
+                scroll: 0,
             })
     }
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>, chunk: Rect) {
-
         let info = [
             Text::raw(format!("Link: {}\n", self.link)),
             Text::raw(format!("Points : {} - Comments : {} - Author: {} \n",
@@ -116,7 +114,6 @@ impl StoryBlock {
             .scroll(self.scroll);
 
         f.render_widget(info_p, chunk);
-
     }
 
     pub fn scroll_down(&mut self) {

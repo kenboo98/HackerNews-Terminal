@@ -10,7 +10,7 @@ use tui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Modifier},
     Terminal,
-    widgets::{Block, Borders, Tabs}
+    widgets::{Block, Borders, Tabs},
 };
 use tui::backend::Backend;
 
@@ -49,11 +49,10 @@ impl App {
                 StoryScreen::new(ListType::ShowStories),
                 StoryScreen::new(ListType::JobStories),
             ],
-            tabs: TabsState::new()
+            tabs: TabsState::new(),
         }
     }
     fn draw<B: Backend>(&mut self, f: &mut Frame<B>) {
-
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .margin(1)
@@ -91,7 +90,7 @@ impl App {
     fn select(&mut self) {
         self.screens[self.tabs.index].select()
     }
-    fn focus(&mut self) {self.screens[self.tabs.index].focus()}
+    fn focus(&mut self) { self.screens[self.tabs.index].focus() }
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -104,8 +103,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut app = App::new();
 
     loop {
-
-        terminal.draw(|mut f| { app.draw(&mut f);})?;
+        terminal.draw(|mut f| { app.draw(&mut f); })?;
         match app.events.next()? {
             Event::Input(key) => match key {
                 Key::Char('q') => {
@@ -118,10 +116,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                 }
                 Key::Up => {
                     app.up();
-                },
+                }
                 Key::Char('\n') => {
                     app.select();
-                },
+                }
                 Key::Char('\x09') => {
                     app.focus();
                 }
