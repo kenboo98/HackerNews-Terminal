@@ -1,13 +1,13 @@
 use serde_json::{Map, Value};
 use tui::widgets::{ListState, Block, BorderType, List, Text, Borders};
 
-use crate::colors::{HN_BACKGROUND, HN_ORANGE};
 use crate::hn_api::{get_items, get_stories, ListType};
 use std::cmp::min;
 use tui::backend::Backend;
 use tui::Frame;
 use tui::style::{Color, Modifier, Style};
 use tui::layout::Rect;
+use crate::colors::*;
 
 const INITIAL_LOADED_ITEMS: usize = 20;
 
@@ -105,20 +105,20 @@ impl StoryList {
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>, chunk: Rect) {
         let mut block = Block::default()
             .title(" Hacker News ")
-            .title_style(Style::default().bg(HN_ORANGE).fg(HN_BACKGROUND))
+            .title_style(get_style(HNStyles::TitleStyle))
             .borders(Borders::ALL)
-            .style(Style::default().bg(HN_BACKGROUND).fg(Color::Black))
-            .border_style(Style::default().bg(HN_BACKGROUND).fg(HN_BACKGROUND));
+            .style(get_style(HNStyles::WhiteBlock))
+            .border_type(BorderType::Plain)
+            .border_style(get_style(HNStyles::OrangeBorder));
         if self.focused {
-            block = block.border_type(BorderType::Double)
-                .border_style(Style::default().bg(HN_BACKGROUND).fg(HN_ORANGE));
+            block = block.border_type(BorderType::Double);
         }
 
         let items = self.titles.iter().map(|i| Text::raw(i));
         let my_list = List::new(items)
             .block(block)
-            .style(Style::default().fg(Color::Black).bg(HN_BACKGROUND))
-            .highlight_style(Style::default().modifier(Modifier::BOLD).fg(Color::Black).bg(HN_BACKGROUND))
+            .style(get_style(HNStyles::WhiteBlock))
+            .highlight_style(get_style(HNStyles::WhiteBlock).modifier(Modifier::BOLD))
             .highlight_symbol(">>");
         f.render_stateful_widget(my_list, chunk, &mut self.state);
     }
