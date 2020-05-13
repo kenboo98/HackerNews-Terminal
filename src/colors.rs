@@ -7,15 +7,17 @@ pub enum HNStyles {
     OrangeBlock,
     WhiteBlock,
     OrangeBorder,
-    TitleStyle
+    OrangeTitle,
+    WhiteTitle,
 }
 
 pub fn get_style(style: HNStyles) -> Style {
     match style {
         HNStyles::OrangeBlock => Style::default().bg(HN_ORANGE).fg(HN_BACKGROUND),
-        HNStyles::WhiteBlock=> Style::default().bg(HN_BACKGROUND).fg(Color::Black),
-        HNStyles::OrangeBorder=> Style::default().bg(HN_BACKGROUND).fg(HN_ORANGE),
-        HNStyles::TitleStyle=> Style::default().bg(HN_ORANGE).fg(HN_BACKGROUND),
+        HNStyles::WhiteBlock => Style::default().bg(HN_BACKGROUND).fg(Color::Black),
+        HNStyles::OrangeBorder => Style::default().bg(HN_BACKGROUND).fg(HN_ORANGE),
+        HNStyles::OrangeTitle => Style::default().bg(HN_ORANGE).fg(HN_BACKGROUND),
+        HNStyles::WhiteTitle => Style::default().bg(HN_BACKGROUND).fg(HN_ORANGE),
     }
 }
 

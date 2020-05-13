@@ -7,6 +7,9 @@ use tui::widgets::{Block, Text, Borders, Paragraph, BorderType};
 use ammonia::Builder;
 use std::collections::HashSet;
 
+use crate::colors::{HNStyles, get_style};
+use crate::colors::HNStyles::OrangeTitle;
+
 pub enum StoryType {
     Job,
     Story,
@@ -94,14 +97,20 @@ impl StoryBlock {
             Text::raw(self.text.as_str()),
         ];
 
-        let mut block = Block::default().title("Info").borders(Borders::ALL);
+        let mut block = Block::default()
+            .title("Info")
+            .title_style(get_style(HNStyles::WhiteTitle))
+            .borders(Borders::ALL)
+            .style(get_style(HNStyles::WhiteBlock))
+            .border_style(get_style(HNStyles::OrangeBorder))
+            .border_type(BorderType::Plain);
         if self.focused {
             block = block.border_type(BorderType::Double);
         }
 
         let info_p = Paragraph::new(info.iter())
             .block(block)
-            .style(Style::default().fg(Color::White))
+            .style(get_style(HNStyles::WhiteBlock))
             .alignment(Alignment::Left)
             .wrap(true)
             .scroll(self.scroll);

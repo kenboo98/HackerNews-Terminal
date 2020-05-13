@@ -1,4 +1,6 @@
 use crate::hn_api::get_comments;
+use crate::colors::{HNStyles, get_style};
+
 use ammonia::Builder;
 use std::collections::HashSet;
 use tui::Frame;
@@ -66,13 +68,21 @@ impl CommentBlock {
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>, chunk: Rect) {
         let comment_text: Vec<Text> = self.comment_strings.iter().map(|c| Text::raw(c)).collect();
 
-        let mut block = Block::default().title("Comments").borders(Borders::ALL);
+        let mut block = Block::default()
+            .title("Comments")
+            .title_style(get_style(HNStyles::WhiteTitle))
+            .borders(Borders::ALL)
+            .style(get_style(HNStyles::WhiteBlock))
+            .border_style(get_style(HNStyles::OrangeBorder))
+            .border_type(BorderType::Plain);
+
         if self.focused {
             block = block.border_type(BorderType::Double);
         }
 
         let paragraph = Paragraph::new(comment_text.iter())
             .block(block)
+            .style(get_style(HNStyles::WhiteBlock))
             .alignment(Alignment::Left)
             .wrap(true)
             .scroll(self.scroll);

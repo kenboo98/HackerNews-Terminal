@@ -29,8 +29,7 @@ use crate::event::{Event, Events};
 use crate::hn_api::ListType;
 use crate::story_screen::StoryScreen;
 use crate::tabs::TabsState;
-use crate::colors as HNColor;
-use crate::colors::HN_ORANGE;
+use crate::colors::{HNStyles, get_style, HN_ORANGE, HN_BACKGROUND};
 
 struct App {
     events: Events,
@@ -67,18 +66,18 @@ impl App {
             )
             .split(f.size());
 
-        let main_block = Block::default().style(Style::new().bg(HNColor::HN_BACKGROUND));
+        let main_block = Block::default().style(Style::new().bg(HN_BACKGROUND));
         f.render_widget(main_block, f.size());
         self.screens[self.tabs.index].draw(f, chunks[1]);
         let tabs = Tabs::default()
             .block(Block::default().borders(Borders::ALL)
-                .title("Stories").title_style(Style::default().bg(HNColor::HN_ORANGE).fg(Color::Black))
-                .border_style(Style::default().bg(HNColor::HN_ORANGE).fg(HNColor::HN_BACKGROUND))
-                .style(Style::default().bg(HNColor::HN_ORANGE).fg(HNColor::HN_ORANGE)))
+                .title("Hacker News").title_style(get_style(HNStyles::OrangeTitle))
+                .border_style(Style::default().bg(HN_ORANGE).fg(HN_ORANGE))
+                .style(get_style(HNStyles::OrangeBlock)))
             .titles(self.tabs.titles.as_slice())
             .select(self.tabs.index)
-            .style(Style::default().bg(HNColor::HN_ORANGE).fg(Color::Black))
-            .highlight_style(Style::default().fg(Color::White).bg(HNColor::HN_ORANGE));
+            .style(get_style(HNStyles::OrangeBlock))
+            .highlight_style(Style::default().fg(Color::Black).bg(HN_ORANGE));
         f.render_widget(tabs, chunks[0]);
     }
 

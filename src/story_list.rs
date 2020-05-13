@@ -104,8 +104,8 @@ impl StoryList {
 
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>, chunk: Rect) {
         let mut block = Block::default()
-            .title(" Hacker News ")
-            .title_style(get_style(HNStyles::TitleStyle))
+            .title(" Stories ")
+            .title_style(get_style(HNStyles::WhiteTitle))
             .borders(Borders::ALL)
             .style(get_style(HNStyles::WhiteBlock))
             .border_type(BorderType::Plain)
