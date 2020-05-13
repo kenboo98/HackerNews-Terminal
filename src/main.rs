@@ -29,7 +29,9 @@ use crate::event::{Event, Events};
 use crate::hn_api::ListType;
 use crate::story_screen::StoryScreen;
 use crate::tabs::TabsState;
-use crate::colors::
+use crate::colors as HNColor;
+use crate::colors::HN_ORANGE;
+
 struct App {
     events: Events,
     screens: Vec<StoryScreen>,
@@ -65,15 +67,18 @@ impl App {
             )
             .split(f.size());
 
-        let main_block = Block::default().style(Style::new().bg(Color::Blue));
+        let main_block = Block::default().style(Style::new().bg(HNColor::HN_BACKGROUND));
         f.render_widget(main_block, f.size());
         self.screens[self.tabs.index].draw(f, chunks[1]);
         let tabs = Tabs::default()
-            .block(Block::default().borders(Borders::ALL).title("Stories"))
+            .block(Block::default().borders(Borders::ALL)
+                .title("Stories").title_style(Style::default().bg(HNColor::HN_ORANGE).fg(Color::Black))
+                .border_style(Style::default().bg(HNColor::HN_ORANGE).fg(HNColor::HN_BACKGROUND))
+                .style(Style::default().bg(HNColor::HN_ORANGE).fg(HNColor::HN_ORANGE)))
             .titles(self.tabs.titles.as_slice())
             .select(self.tabs.index)
-            .style(Style::default().fg(Color::Cyan))
-            .highlight_style(Style::default().fg(Color::Yellow));
+            .style(Style::default().bg(HNColor::HN_ORANGE).fg(Color::Black))
+            .highlight_style(Style::default().fg(Color::White).bg(HNColor::HN_ORANGE));
         f.render_widget(tabs, chunks[0]);
     }
 
