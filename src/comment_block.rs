@@ -9,7 +9,9 @@ use tui::backend::Backend;
 use tui::widgets::{Paragraph, Block, Borders, Text, BorderType};
 use serde_json::{Map, Value};
 use tui::style::Style;
+use std::cmp::min;
 
+const MAX_DEPTH: u16 = 10;
 pub struct Comment {
     pub text: String,
     pub replies: Option<Vec<Comment>>,
@@ -24,8 +26,8 @@ pub struct CommentBlock {
 
 impl CommentBlock {
     fn helper(c: &Comment, depth: u16, builder: &Builder) -> Vec<String> {
-        let prefix = "-".repeat(depth as usize);
-        let mut result = vec![format!("{}{}\n", prefix, builder.clean(c.text.as_str()))];
+        let prefix = "--".repeat(min(depth, MAX_DEPTH) as usize);
+        let mut result = vec![format!("{}> {}\n", prefix, builder.clean(c.text.as_str()))];
         match &c.replies {
             Some(replies) => {
                 for reply in replies {
@@ -54,7 +56,7 @@ impl CommentBlock {
         let tag_cleaner = builder.tags(HashSet::new());
         let mut comment_strings = Vec::new();
         for c in &comments {
-            comment_strings.append(&mut CommentBlock::helper(c, 1, &tag_cleaner));
+            comment_strings.append(&mut CommentBlock::helper(c, 0, &tag_cleaner));
         };
 
         Some(CommentBlock {

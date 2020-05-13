@@ -8,7 +8,7 @@ use tui::{
     backend::TermionBackend,
     Frame,
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style},
+    style::{Color, Style, Modifier},
     Terminal,
     widgets::{Block, Borders, Tabs}
 };
@@ -71,7 +71,7 @@ impl App {
         self.screens[self.tabs.index].draw(f, chunks[1]);
         let tabs = Tabs::default()
             .block(Block::default().borders(Borders::ALL)
-                .title("Hacker News").title_style(get_style(HNStyles::OrangeTitle))
+                .title("Hacker News").title_style(get_style(HNStyles::OrangeTitle).modifier(Modifier::BOLD))
                 .border_style(Style::default().bg(HN_ORANGE).fg(HN_ORANGE))
                 .style(get_style(HNStyles::OrangeBlock)))
             .titles(self.tabs.titles.as_slice())
