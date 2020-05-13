@@ -14,10 +14,6 @@ use tui::{
 };
 use tui::backend::Backend;
 
-use crate::event::{Event, Events};
-use crate::hn_api::ListType;
-use crate::story_screen::StoryScreen;
-use crate::tabs::TabsState;
 
 #[allow(dead_code)]
 mod event;
@@ -27,7 +23,13 @@ mod story_screen;
 mod tabs;
 mod story_block;
 mod comment_block;
+mod colors;
 
+use crate::event::{Event, Events};
+use crate::hn_api::ListType;
+use crate::story_screen::StoryScreen;
+use crate::tabs::TabsState;
+use crate::colors::
 struct App {
     events: Events,
     screens: Vec<StoryScreen>,
@@ -50,18 +52,21 @@ impl App {
         }
     }
     fn draw<B: Backend>(&mut self, f: &mut Frame<B>) {
+
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .margin(1)
             .constraints(
                 [
-                    Constraint::Percentage(7),
-                    Constraint::Percentage(93),
+                    Constraint::Min(3),
+                    Constraint::Percentage(100),
                 ]
                     .as_ref(),
             )
             .split(f.size());
 
+        let main_block = Block::default().style(Style::new().bg(Color::Blue));
+        f.render_widget(main_block, f.size());
         self.screens[self.tabs.index].draw(f, chunks[1]);
         let tabs = Tabs::default()
             .block(Block::default().borders(Borders::ALL).title("Stories"))
@@ -95,6 +100,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut app = App::new();
 
     loop {
+
         terminal.draw(|mut f| { app.draw(&mut f);})?;
         match app.events.next()? {
             Event::Input(key) => match key {

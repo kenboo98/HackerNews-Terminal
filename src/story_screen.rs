@@ -45,8 +45,8 @@ impl StoryScreen {
             .constraints(
                 [
                     Constraint::Percentage(30),
-                    Constraint::Percentage(15),
-                    Constraint::Percentage(55)
+                    Constraint::Min(4),
+                    Constraint::Percentage(70)
                 ]
                     .as_ref(),
             )
