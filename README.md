@@ -1,6 +1,6 @@
-<img src="./screenshots/demo.gif" alt="Hacker News Terminal Demo">
-
 # HackerNews in the Terminal
+
+<img src="./screenshots/demo.gif" alt="Hacker News Terminal Demo">
 
 ## About
 
