@@ -72,8 +72,7 @@ pub fn get_items(ids: &[String]) -> Result<Vec<Map<String, Value>>, Error> {
 
 
 #[async_recursion]
-async fn comment_helper(ids: &[i64]) -> Vec<Comment> {
-    let client = Client::new();
+async fn comment_helper(ids: &[i64], client: &Client) -> Vec<Comment> {
     let results = join_all(
         ids
             .into_iter()
@@ -100,7 +99,7 @@ async fn comment_helper(ids: &[i64]) -> Vec<Comment> {
                         .map(|kid|{
                             kid.as_i64().unwrap()
                          }).collect();
-                    Some(comment_helper(kids.as_slice()).await)
+                    Some(comment_helper(kids.as_slice(), client).await)
                 },
                 None => None
             };
@@ -116,6 +115,7 @@ async fn comment_helper(ids: &[i64]) -> Vec<Comment> {
 
 pub fn get_comments(ids: &[i64]) -> Result<Vec<Comment>, Error> {
     let mut rt = Runtime::new()?;
-    Ok(rt.block_on(comment_helper(ids)))
+    let client = Client::new();
+    Ok(rt.block_on(comment_helper(ids, &client)))
 }
 
